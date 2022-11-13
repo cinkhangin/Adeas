@@ -3,27 +3,25 @@ package com.naulian.library
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
-import com.naulian.adeas.AdUnits
-import com.naulian.adeas.Adeas
-import com.naulian.adeas.BannerView
+import com.naulian.adeas.*
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val adUnits = AdUnits()
-        Adeas.initialize(this, adUnits, true)
-        Adeas.loadAll(this)
+        initializeAdmob(this)
+        loadAllAds(this)
 
-        findViewById<BannerView>(R.id.bannerView).loadAd()
+        val bannerView = findViewById<BannerView>(R.id.bannerView)
+        showBannerAd(bannerView)
 
         findViewById<Button>(R.id.btnInterstitial).setOnClickListener {
-            Adeas.showInterstitialAd(this){}
+           showInterstitialAd(this){}
         }
 
         findViewById<Button>(R.id.btnRewarded).setOnClickListener {
-            Adeas.showRewardedAd(this){}
+            showRewardedAd(this){}
         }
     }
 }
