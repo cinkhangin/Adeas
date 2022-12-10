@@ -2,6 +2,7 @@ package com.naulian.adeas
 
 import android.app.Activity
 import android.content.Context
+import androidx.fragment.app.Fragment
 
 fun initializeAdmob(
     context: Context,
@@ -40,5 +41,37 @@ fun showInterstitialAd(activity: Activity, action: (result: Boolean) -> Unit){
 }
 
 fun showBannerAd(bannerView: BannerView){
+    bannerView.loadAd()
+}
+
+fun Fragment.loadRewardedAd(){
+    Adeas.load(AdType.REWARDED, requireContext())
+}
+
+fun Fragment.loadInterstitialAd(){
+    Adeas.load(AdType.INTERSTITIAL , requireContext())
+}
+
+fun Fragment.loadBannerAd(){
+    Adeas.load(AdType.BANNER, requireContext())
+}
+
+fun Fragment.loadAds(adType: AdType){
+    Adeas.load(adType , requireContext())
+}
+
+fun Fragment.loadAllAds(){
+    Adeas.loadAll(requireContext())
+}
+
+fun Fragment.showRewardedAd(action: (result: Boolean) -> Unit){
+    Adeas.showRewardedAd(requireActivity(), action)
+}
+
+fun Fragment.showInterstitialAd(action: (result: Boolean) -> Unit){
+    Adeas.showInterstitialAd(requireActivity() , action)
+}
+
+fun Fragment.showBannerAd(bannerView: BannerView){
     bannerView.loadAd()
 }
