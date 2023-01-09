@@ -1,3 +1,5 @@
+@file:Suppress("unused")
+
 package com.naulian.adeas
 
 import android.app.Activity
@@ -40,10 +42,6 @@ fun showInterstitialAd(activity: Activity, action: (result: Boolean) -> Unit){
     Adeas.showInterstitialAd(activity , action)
 }
 
-fun showBannerAd(bannerView: BannerView){
-    bannerView.loadAd()
-}
-
 fun Fragment.loadRewardedAd(){
     Adeas.load(AdType.REWARDED, requireContext())
 }
@@ -70,8 +68,4 @@ fun Fragment.showRewardedAd(action: (result: Boolean) -> Unit){
 
 fun Fragment.showInterstitialAd(action: (result: Boolean) -> Unit){
     Adeas.showInterstitialAd(requireActivity() , action)
-}
-
-fun Fragment.showBannerAd(bannerView: BannerView){
-    bannerView.loadAd()
 }

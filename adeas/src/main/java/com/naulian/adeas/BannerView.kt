@@ -7,7 +7,9 @@ import com.google.android.material.card.MaterialCardView
 class BannerView(context: Context, attrs: AttributeSet) :
     MaterialCardView(context, attrs) {
 
-    fun loadAd() {
+    init { loadAd() }
+
+    private fun loadAd() {
         Adeas.load(AdType.BANNER, context)
         addView(Adeas.adView)
     }

@@ -13,9 +13,6 @@ class MainActivity : AppCompatActivity() {
         initializeAdmob(this)
         loadAllAds(this)
 
-        val bannerView = findViewById<BannerView>(R.id.bannerView)
-        showBannerAd(bannerView)
-
         findViewById<Button>(R.id.btnInterstitial).setOnClickListener {
            showInterstitialAd(this){}
         }
