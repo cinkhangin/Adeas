@@ -11,22 +11,17 @@ class BannerView @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
 ) : MaterialCardView(context, attrs, defStyleAttr) {
 
-    private val layoutInflater = LayoutInflater.from(context)
-
-    init { loadAd() }
-
-    private fun loadAd() {
-        if (isInEditMode) {
-            val preview = loadPreview(R.layout.banner_view)
-            addView(preview)
-            return
-        }
-
-        Adeas.load(AdType.BANNER, context)
-        addView(Adeas.adView)
+    init {
+        if (isInEditMode) loadPreview()
+        else loadAd()
     }
 
-    private fun loadPreview(@LayoutRes layout: Int): View {
-        return layoutInflater.inflate(layout, this, true)
+    private fun loadPreview() {
+        val inflater =  LayoutInflater.from(context)
+       inflater.inflate(R.layout.banner_view, this, true)
+    }
+
+    private fun loadAd() {
+        addView(Adeas.createBanner(context))
     }
 }

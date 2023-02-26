@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -9,21 +10,27 @@
 
     <com.naulian.adeas.BannerView
         android:id="@+id/bannerView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:cardCornerRadius="8dp"
+        app:cardElevation="0dp" />
 
-    <Button
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/btnInterstitial"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Interstitial"
-        />
+        android:text="@string/show_interstitial" />
 
-    <Button
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/btnRewarded"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Rewarded"
-        />
+        android:text="@string/show_rewarded" />
+
+    <com.google.android.material.materialswitch.MaterialSwitch
+        android:id="@+id/switchAds"
+        android:text="@string/enable_ads"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
 
 </LinearLayout>
