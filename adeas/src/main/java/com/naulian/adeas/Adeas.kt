@@ -61,7 +61,6 @@ object Adeas {
         context.booleanFlow(keyEnable, true).collect {
             mutableState.value = it
             isEnable = it
-            context.showToast(it.toString())
         }
     }
 
