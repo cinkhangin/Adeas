@@ -1,23 +1,25 @@
+@file:Suppress("unused")
+
 package com.naulian.adeas
 
 import android.app.Activity
 import android.content.Context
-import android.util.Log
-import androidx.core.view.isVisible
 import com.google.android.gms.ads.*
 import com.google.android.gms.ads.interstitial.InterstitialAd
 import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback
 import com.google.android.gms.ads.rewarded.RewardedAd
 import com.google.android.gms.ads.rewarded.RewardedAdLoadCallback
 import com.naulian.anhance.booleanFlow
-import com.naulian.anhance.readBoolean
-import com.naulian.anhance.showTextToast
+import com.naulian.anhance.logDebug
+import com.naulian.anhance.logError
+import com.naulian.anhance.showToast
 import com.naulian.anhance.writeBoolean
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.collectLatest
 
 object Adeas {
+    private val TAG = Adeas::class.java.simpleName
+
     private var rewardedAd: RewardedAd? = null
     private var interstitialAd: InterstitialAd? = null
     private var debugMode: Boolean = true
@@ -37,6 +39,8 @@ object Adeas {
     private val mutableState = MutableStateFlow(true)
     val state = mutableState.asStateFlow()
 
+    private var onCloseRewarded: (() -> Unit)? = null
+
     fun createBanner(context: Context): AdView {
         return adView ?: AdView(context).apply {
             val adRequest = AdRequest.Builder().build()
@@ -47,16 +51,18 @@ object Adeas {
     }
 
     suspend fun initialize(context: Context, adUnits: AdUnits, isDebugMode: Boolean) {
-        context.booleanFlow(keyEnable, true).collect{
-            mutableState.value = it
-            isEnable = it
-        }
-
         MobileAds.initialize(context)
 
         debugMode = isDebugMode
         adView = AdView(context)
         this.adUnits = adUnits
+
+
+        context.booleanFlow(keyEnable, true).collect {
+            mutableState.value = it
+            isEnable = it
+            context.showToast(it.toString())
+        }
     }
 
     suspend fun enableAds(context: Context) {
@@ -88,12 +94,12 @@ object Adeas {
 
         val addLoadCallback = object : InterstitialAdLoadCallback() {
             override fun onAdFailedToLoad(adError: LoadAdError) {
-                Log.d("Interstitial Ad", adError.message)
+                logError(TAG, adError.message)
                 interstitialAd = null
             }
 
             override fun onAdLoaded(ad: InterstitialAd) {
-                Log.d("Interstitial Ad", "Ad was loaded")
+                logDebug(TAG, " Ad was loaded ")
                 interstitialAd = ad
             }
         }
@@ -116,11 +122,13 @@ object Adeas {
         val rewardedAdLoadCallback = object : RewardedAdLoadCallback() {
             override fun onAdLoaded(ad: RewardedAd) {
                 super.onAdLoaded(ad)
+                logDebug(TAG, "Ad is loaded")
                 rewardedAd = ad
             }
 
-            override fun onAdFailedToLoad(p0: LoadAdError) {
-                super.onAdFailedToLoad(p0)
+            override fun onAdFailedToLoad(error: LoadAdError) {
+                super.onAdFailedToLoad(error)
+                logError(TAG, error.message)
                 rewardedAd = null
             }
         }
@@ -143,7 +151,7 @@ object Adeas {
         }
     }
 
-    fun showRewardedAd(activity: Activity, action: (result: Boolean) -> Unit) {
+    fun showRewardedAd(activity: Activity, action: (Boolean) -> Unit) {
         if (!isEnable) return
 
         if (rewardedAd == null) {
@@ -151,9 +159,26 @@ object Adeas {
             return
         }
 
-        rewardedAd?.let {
-            it.show(activity) {
+        rewardedAd?.apply {
+            fullScreenContentCallback = object : FullScreenContentCallback() {
+                override fun onAdClicked() {}
+
+                override fun onAdDismissedFullScreenContent() {
+                    onCloseRewarded?.invoke()
+                }
+
+                override fun onAdFailedToShowFullScreenContent(adError: AdError) {
+                    logError(TAG, "${adError.code}: ${adError.message}")
+                }
+
+                override fun onAdImpression() {}
+
+                override fun onAdShowedFullScreenContent() {}
+            }
+
+            show(activity) {
                 action(true)
+                rewardedAd = null
                 load(AdType.REWARDED, activity)
             }
         }
@@ -167,8 +192,8 @@ object Adeas {
             return
         }
 
-        interstitialAd?.let {
-            it.fullScreenContentCallback = object : FullScreenContentCallback() {
+        interstitialAd?.apply {
+            fullScreenContentCallback = object : FullScreenContentCallback() {
                 override fun onAdClicked() {}
                 override fun onAdDismissedFullScreenContent() {
                     interstitialAd = null
@@ -178,8 +203,12 @@ object Adeas {
                 override fun onAdImpression() {}
                 override fun onAdShowedFullScreenContent() {}
             }
-            it.show(activity)
+            show(activity)
         }
+    }
+
+    fun onClosedRewarded(action: () -> Unit) {
+        onCloseRewarded = action
     }
 
     fun clearAdView() {

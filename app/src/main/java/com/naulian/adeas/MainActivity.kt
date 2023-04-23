@@ -1,18 +1,19 @@
-package com.naulian.library
+package com.naulian.adeas
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import com.google.android.material.materialswitch.MaterialSwitch
-import com.naulian.adeas.*
 import com.naulian.anhance.activityScope
 import com.naulian.anhance.observe
 import com.naulian.anhance.showToast
 
 class MainActivity : AppCompatActivity() {
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         setContentView(R.layout.activity_main)
 
         val interButton = findViewById<Button>(R.id.btnInterstitial)
@@ -21,16 +22,27 @@ class MainActivity : AppCompatActivity() {
         val bannerView = findViewById<BannerView>(R.id.bannerView)
 
         activityScope {
-            initializeAdmob(this@MainActivity)
+            initializeAdmob(this@MainActivity, debug = true)
+        }
+        activityScope {
             loadAllAds(this@MainActivity)
+
+            observe(Adeas.state) {
+                adSwitch.isChecked = it
+                bannerView.isVisible = it
+            }
         }
 
         interButton.setOnClickListener {
-            showInterstitialAd(this) {}
+            showInterstitialAd(this) {
+                if (!it) showToast("Ad is not ready")
+            }
         }
 
         rewardedButton.setOnClickListener {
-            showRewardedAd(this) {}
+            showRewardedAd(this) {
+                if (!it) showToast("Ad is not ready")
+            }
         }
 
 
@@ -40,13 +52,6 @@ class MainActivity : AppCompatActivity() {
                     if (isChecked) Adeas.enableAds(this@MainActivity)
                     else Adeas.disableAds(this@MainActivity)
                 }
-            }
-        }
-
-        activityScope {
-            observe(Adeas.state) {
-                adSwitch.isChecked = it
-                bannerView.isVisible = it
             }
         }
     }

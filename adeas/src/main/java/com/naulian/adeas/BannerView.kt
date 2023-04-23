@@ -3,8 +3,6 @@ package com.naulian.adeas
 import android.content.Context
 import android.util.AttributeSet
 import android.view.LayoutInflater
-import android.view.View
-import androidx.annotation.LayoutRes
 import com.google.android.material.card.MaterialCardView
 
 class BannerView @JvmOverloads constructor(
@@ -17,8 +15,8 @@ class BannerView @JvmOverloads constructor(
     }
 
     private fun loadPreview() {
-        val inflater =  LayoutInflater.from(context)
-       inflater.inflate(R.layout.banner_view, this, true)
+        val inflater = LayoutInflater.from(context)
+        inflater.inflate(R.layout.banner_view, this, true)
     }
 
     private fun loadAd() {

@@ -68,3 +68,7 @@ fun Fragment.showRewardedAd(action: (result: Boolean) -> Unit) {
 fun Fragment.showInterstitialAd(action: (result: Boolean) -> Unit) {
     Adeas.showInterstitialAd(requireActivity(), action)
 }
+
+fun onClosedRewarded(action: () -> Unit){
+    Adeas.onClosedRewarded(action)
+}
