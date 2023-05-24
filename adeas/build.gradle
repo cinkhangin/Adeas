@@ -33,13 +33,13 @@ android {
 
 dependencies {
 
-    implementation 'androidx.core:core-ktx:1.10.0'
+    implementation 'androidx.core:core-ktx:1.10.1'
     implementation 'androidx.appcompat:appcompat:1.6.1'
-    implementation 'com.google.android.material:material:1.8.0'
+    implementation 'com.google.android.material:material:1.9.0'
 
-    implementation("com.github.cinkhangin:anhance:1.0.0-alpha")
+    implementation("com.github.cinkhangin:anhance:1.2.1")
     //admob
-    implementation 'com.google.android.gms:play-services-ads:22.0.0'
+    implementation 'com.google.android.gms:play-services-ads:22.1.0'
 }
 
 afterEvaluate {
@@ -50,7 +50,7 @@ afterEvaluate {
 
                 groupId = 'com.github.cinkhangin'
                 artifactId = 'adeas'
-                version = '1.0.0-beta'
+                version = '1.0.0'
             }
         }
     }
