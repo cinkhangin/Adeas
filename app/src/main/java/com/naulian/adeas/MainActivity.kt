@@ -21,12 +21,11 @@ class MainActivity : AppCompatActivity() {
         val adSwitch = findViewById<MaterialSwitch>(R.id.switchAds)
         val bannerView = findViewById<BannerView>(R.id.bannerView)
 
-        activityScope {
-            initializeAdmob(this@MainActivity, debug = true)
-        }
-        activityScope {
-            loadAllAds(this@MainActivity)
 
+        initializeAdmob(this@MainActivity, debug = true)
+        loadAllAds(this@MainActivity)
+
+        activityScope {
             observe(Adeas.state) {
                 adSwitch.isChecked = it
                 bannerView.isVisible = it
@@ -45,13 +44,10 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-
         adSwitch.setOnCheckedChangeListener { buttonView, isChecked ->
             if (buttonView.isPressed) {
-                activityScope {
-                    if (isChecked) Adeas.enableAds(this@MainActivity)
-                    else Adeas.disableAds(this@MainActivity)
-                }
+                if (isChecked) Adeas.enableAds(this@MainActivity)
+                else Adeas.disableAds(this@MainActivity)
             }
         }
     }

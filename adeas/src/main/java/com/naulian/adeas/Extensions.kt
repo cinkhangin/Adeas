@@ -6,7 +6,7 @@ import android.app.Activity
 import android.content.Context
 import androidx.fragment.app.Fragment
 
-suspend fun initializeAdmob(
+fun initializeAdmob(
     context: Context,
     adUnits: AdUnits = AdUnits(),
     debug: Boolean = false

@@ -9,11 +9,9 @@ import com.google.android.gms.ads.interstitial.InterstitialAd
 import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback
 import com.google.android.gms.ads.rewarded.RewardedAd
 import com.google.android.gms.ads.rewarded.RewardedAdLoadCallback
-import com.naulian.anhance.booleanFlow
+import com.naulian.anhance.PrefStore
 import com.naulian.anhance.logDebug
 import com.naulian.anhance.logError
-import com.naulian.anhance.showToast
-import com.naulian.anhance.writeBoolean
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
@@ -41,6 +39,9 @@ object Adeas {
 
     private var onCloseRewarded: (() -> Unit)? = null
 
+    private val mutableRewarded = MutableStateFlow(false)
+    val rewarded = mutableRewarded.asStateFlow()
+
     fun createBanner(context: Context): AdView {
         return adView ?: AdView(context).apply {
             val adRequest = AdRequest.Builder().build()
@@ -50,26 +51,27 @@ object Adeas {
         }
     }
 
-    suspend fun initialize(context: Context, adUnits: AdUnits, isDebugMode: Boolean) {
+    fun initialize(context: Context, adUnits: AdUnits, isDebugMode: Boolean) {
         MobileAds.initialize(context)
 
         debugMode = isDebugMode
         adView = AdView(context)
         this.adUnits = adUnits
 
-
-        context.booleanFlow(keyEnable, true).collect {
-            mutableState.value = it
-            isEnable = it
-        }
+        isEnable = PrefStore(context).readBoolean(keyEnable, true)
+        mutableState.value = isEnable
     }
 
-    suspend fun enableAds(context: Context) {
-        context.writeBoolean(keyEnable, true)
+    fun enableAds(context: Context) {
+        PrefStore(context).writeBoolean(keyEnable, true)
+        isEnable = true
+        mutableState.value = isEnable
     }
 
-    suspend fun disableAds(context: Context) {
-        context.writeBoolean(keyEnable, false)
+    fun disableAds(context: Context) {
+        PrefStore(context).writeBoolean(keyEnable, false)
+        isEnable = false
+        mutableState.value = isEnable
     }
 
     fun load(adType: AdType, context: Context) {
@@ -123,12 +125,14 @@ object Adeas {
                 super.onAdLoaded(ad)
                 logDebug(TAG, "Ad is loaded")
                 rewardedAd = ad
+                mutableRewarded.value = true
             }
 
             override fun onAdFailedToLoad(error: LoadAdError) {
                 super.onAdFailedToLoad(error)
                 logError(TAG, error.message)
                 rewardedAd = null
+                mutableRewarded.value = false
             }
         }
 
